@@ -1,0 +1,25 @@
+{
+    "name": "Netnimes",
+    "description": "Entension to simulate a streaming website.",
+    "version": "0.0.1",
+    "manifest_version": 3,
+    "permissions": ["storage", "scripting"],
+    "web_accessible_resources": [{
+        "resources": ["menu.svg"],
+        "matches": ["chrome-extension://dccmijfijggdeodgldgfedpkiaobodmo/*"],
+        "use_dynamic_url": true
+    }],
+    "content_scripts": [{
+        "matches": ["https://yayanimes.net/*"],
+        "css": ["src/assets/css/_global.css"],
+        "js": [
+            "src/vendor/moment/moment.min.js",
+            "src/utils.js",
+            "src/images.js",
+            "src/session.js",
+            "src/url.js",
+            "src/html-components.js",
+            "src/content-script.js"
+        ]
+    }]
+}
