@@ -73,19 +73,21 @@ const _createSideMenu = (episodes) => {
 
     menuitem.appendChild(fullscreenButton)
 
-    episodes.sort(sortByEpisodeDesc)
+    if (episodes) {
+        episodes.sort(sortByEpisodeDesc)
 
-    episodes.forEach((epi) => {
-        const button = document.createElement('button')
-        button.style.textTransform = 'capitalize'
-        const animeName = epi.name.split('-').join(' ');
-        const textButton = document.createTextNode(animeName + ' ' + epi.episode);
-        button.appendChild(textButton)
-        button.addEventListener('click', () => {
-            window.location.href = `https://yayanimes.net/${epi.anime}-${epi.episode}`
+        episodes.forEach((epi) => {
+            const button = document.createElement('button')
+            button.style.textTransform = 'capitalize'
+            const animeName = epi.name.split('-').join(' ');
+            const textButton = document.createTextNode(animeName + ' ' + epi.episode);
+            button.appendChild(textButton)
+            button.addEventListener('click', () => {
+                window.location.href = `https://yayanimes.net/${epi.anime}-${epi.episode}`
+            })
+            menuitem.appendChild(button)
         })
-        menuitem.appendChild(button)
-    })
+    }
     menu.appendChild(menuitem)
     menu.appendChild(outMenu)
 
