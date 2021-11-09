@@ -66,9 +66,17 @@ const _createSideMenu = (episodes) => {
     fullscreenButton.appendChild(fullscreenTextButton)
     fullscreenButton.addEventListener('click', () => {
         const wrapper = document.querySelector('.jw-wrapper')
-        _setPlayerFullPage(wrapper)
-        const fullscreen = parseInt(sessionStorage.getItem('fullscreen'));
-        sessionStorage.setItem('fullscreen', fullscreen === 0 || fullscreen === null ? 1 : 0)
+        if (wrapper) {
+            _setPlayerFullPage(wrapper)
+            const fullscreen = parseInt(sessionStorage.getItem('fullscreen'));
+            sessionStorage.setItem('fullscreen', fullscreen === 0 || fullscreen === null ? 1 : 0)
+        } else {
+            console.log('Call Toast')
+            new Toast({
+                message: 'A funcao fullscreen so esta disponivel para paginas com episodios',
+                type: 'danger'
+            });
+        }
     })
 
     menuitem.appendChild(fullscreenButton)

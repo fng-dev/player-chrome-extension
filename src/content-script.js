@@ -69,30 +69,32 @@ const initEpisode = async() => {
         })
     } else {
         const elements = document.querySelectorAll('.nome-thumb');
-        elements.forEach((el) => {
-            const thumbEpi = el.querySelector('.thumb');
-            const epiNumber = el.querySelector('.num-episodio');
-            epiNumber.style.bottom = '20px'
-            const number = epiNumber.textContent.split(' ')[1];
-            const epi = episodes.find((epi) => epi.episode === number)
-            if (epi) {
-                const percentage = epi.currentTime * 100 / epi.duration
+        if (episodes) {
+            elements.forEach((el) => {
+                const thumbEpi = el.querySelector('.thumb');
+                const epiNumber = el.querySelector('.num-episodio');
+                epiNumber.style.bottom = '20px'
+                const number = epiNumber.textContent.split(' ')[1];
+                const epi = episodes.find((epi) => epi.episode === number)
+                if (epi) {
+                    const percentage = epi.currentTime * 100 / epi.duration
 
-                const barraTempo = document.createElement('div');
-                barraTempo.style.width = '100%'
-                barraTempo.style.height = '10px'
-                barraTempo.style.position = 'absolute'
-                barraTempo.style.backgroundColor = 'white'
-                barraTempo.style.bottom = '0px'
+                    const barraTempo = document.createElement('div');
+                    barraTempo.style.width = '100%'
+                    barraTempo.style.height = '10px'
+                    barraTempo.style.position = 'absolute'
+                    barraTempo.style.backgroundColor = 'white'
+                    barraTempo.style.bottom = '0px'
 
-                const marcador = document.createElement('div')
-                marcador.style.width = parseInt(percentage) + '%'
-                marcador.style.height = '10px'
-                marcador.style.backgroundColor = 'orange'
-                barraTempo.appendChild(marcador)
-                thumbEpi.appendChild(barraTempo)
-            }
-        })
+                    const marcador = document.createElement('div')
+                    marcador.style.width = parseInt(percentage) + '%'
+                    marcador.style.height = '10px'
+                    marcador.style.backgroundColor = 'orange'
+                    barraTempo.appendChild(marcador)
+                    thumbEpi.appendChild(barraTempo)
+                }
+            })
+        }
     }
 
 

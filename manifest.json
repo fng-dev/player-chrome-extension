@@ -11,9 +11,13 @@
     }],
     "content_scripts": [{
         "matches": ["https://yayanimes.net/*"],
-        "css": ["src/assets/css/_global.css"],
+        "css": [
+            "src/assets/css/_global.css",
+            "src/assets/css/toast.css"
+        ],
         "js": [
             "src/vendor/moment/moment.min.js",
+            "src/vendor/toast/toast.min.js",
             "src/utils.js",
             "src/images.js",
             "src/session.js",
