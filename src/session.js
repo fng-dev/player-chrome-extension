@@ -1,21 +1,41 @@
 const SESSION_NAME = 'netAnimes';
 
-const createSession = () => {
-    const INITIAL_VALUE = JSON.stringify({
-        episodes: [],
-        created_at: moment(),
+const chromeStorageSyncGet = (key) => {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get([key], (result) => {
+            resolve(result[key])
+        })
     })
-    localStorage.setItem(SESSION_NAME, INITIAL_VALUE)
 }
 
-const setSession = (payload) => {
-    const STORAGE = JSON.parse(localStorage.getItem(SESSION_NAME));
+const chromeStorageSyncSet = (object) => {
+    return new Promise((resolve) => {
+        chrome.storage.sync.set(object, resolve)
+    })
+}
+
+const createSession = async() => {
+    const SESSION = await chromeStorageSyncGet(SESSION_NAME)
+    if (SESSION === null || SESSION === undefined) await chromeStorageSyncSet({
+        [SESSION_NAME]: {
+            created_at: moment(),
+            episodes: []
+        }
+    })
+}
+
+const setSession = async(payload) => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
     const SESSION = {...STORAGE, payload }
-    localStorage.setItem(SESSION_NAME, JSON.stringify(SESSION))
+    await chromeStorageSyncSet({
+        [SESSION_NAME]: {...SESSION }
+    })
 }
 
-const setEpisode = (payload) => {
-    const STORAGE = JSON.parse(localStorage.getItem(SESSION_NAME))
+const setEpisode = async(payload) => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
     const { episodes } = STORAGE;
     const EPISODE_INDEX = episodes.findIndex((episode) => episode.anime === payload.anime && episode.episode === payload.episode)
     if (EPISODE_INDEX === -1) {
@@ -26,11 +46,14 @@ const setEpisode = (payload) => {
 
     const SESSION = {...STORAGE, episodes }
 
-    localStorage.setItem(SESSION_NAME, JSON.stringify(SESSION))
+    await chromeStorageSyncSet({
+        [SESSION_NAME]: {...SESSION }
+    })
 }
 
-const getEpisode = (anime, episodeNumber) => {
-    const STORAGE = JSON.parse(localStorage.getItem(SESSION_NAME))
+const getEpisode = async(anime, episodeNumber) => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
     const { episodes } = STORAGE
     const episode = episodes.find((ep) => ep.anime === anime && ep.episode === episodeNumber)
     if (episode) {
@@ -40,8 +63,9 @@ const getEpisode = (anime, episodeNumber) => {
     return false
 }
 
-const getEpisodesByAnime = (name) => {
-    const STORAGE = JSON.parse(localStorage.getItem(SESSION_NAME))
+const getEpisodesByAnime = async(name) => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
     const { episodes } = STORAGE
     const episode = episodes.filter((ep) => ep.name === name)
     if (episode.length) {
@@ -51,21 +75,14 @@ const getEpisodesByAnime = (name) => {
     return false
 }
 
-const getLastEpisode = (anime) => {
-    const STORAGE = JSON.parse(localStorage.getItem(SESSION_NAME))
+const getLastEpisode = async(anime) => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
     const { episodes } = STORAGE
     const animeEpisodes = episodes.filter((ep) => ep.anime === anime)
     if (animeEpisodes.length > 0) {
         animeEpisodes.sort(sortByEpisode)
         return animeEpisodes[animeEpisodes.length - 1]
-    }
-
-    return false
-}
-
-const isSessionSeted = () => {
-    if (localStorage.getItem(SESSION_NAME)) {
-        return true
     }
 
     return false

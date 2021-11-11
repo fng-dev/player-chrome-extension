@@ -2,13 +2,12 @@ let UPDATE_STORAGE_TIME = 20;
 let REDIRECT_END_TIME = 20;
 let INIT_VIDEO_TIME = 210;
 
-if (!isSessionSeted()) {
-    createSession()
-}
+createSession();
 
 
 const initEpisode = async() => {
-    const EPISODE = getEpisodeByUrl()
+    chrome.storage.sync.get((result) => console.log(result))
+    const EPISODE = await getEpisodeByUrl()
     let video = null
     let attempts = 0;
 
@@ -21,17 +20,17 @@ const initEpisode = async() => {
     let episodes = []
     if (EPISODE) {
         if (EPISODE.name !== '') {
-            episodes = getEpisodesByAnime(EPISODE.name)
+            episodes = await getEpisodesByAnime(EPISODE.name)
         } else {
             const name = getNameAnimeByUrl();
-            episodes = getEpisodesByAnime(name)
+            episodes = await getEpisodesByAnime(name)
         }
     }
 
     _createSideMenu(episodes)
 
     if (video) {
-        const STORAGE_EPISODE = getEpisode(EPISODE.anime, EPISODE.episode)
+        const STORAGE_EPISODE = await getEpisode(EPISODE.anime, EPISODE.episode)
 
         if (STORAGE_EPISODE) {
             video.currentTime = STORAGE_EPISODE.currentTime
