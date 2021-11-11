@@ -5,7 +5,7 @@ let INIT_VIDEO_TIME = 210;
 createSession();
 
 
-const initEpisode = async() => {
+const initEpisode = async () => {
     chrome.storage.sync.get((result) => console.log(result))
     const EPISODE = await getEpisodeByUrl()
     let video = null
@@ -32,11 +32,7 @@ const initEpisode = async() => {
     if (video) {
         const STORAGE_EPISODE = await getEpisode(EPISODE.anime, EPISODE.episode)
 
-        if (STORAGE_EPISODE) {
-            video.currentTime = STORAGE_EPISODE.currentTime
-        } else {
-            video.currentTime = INIT_VIDEO_TIME
-        }
+
 
         if (parseInt(sessionStorage.getItem('fullscreen')) === 1) {
             const wrapper = document.querySelector('.jw-wrapper')
@@ -44,6 +40,19 @@ const initEpisode = async() => {
         }
 
         video.play()
+
+        if (STORAGE_EPISODE) {
+            video.currentTime = STORAGE_EPISODE.currentTime
+        } else {
+            setTimeout(() => {
+                const skip = document.querySelector('.skiab')
+                if (skip) {
+                    skip.click()
+                } else {
+                    console.log('Not Found')
+                }
+            }, 2000)
+        }
 
         let updated_at = 0;
         let redirect = false
