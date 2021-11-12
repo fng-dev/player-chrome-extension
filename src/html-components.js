@@ -42,7 +42,9 @@ const _createLastEpisodeInfo = (anime) => {
     return false
 }
 
-const _createSideMenu = (episodes) => {
+const _createSideMenu = async(episodes) => {
+
+    const animesGrouped = await getAllEpisodesGrouped();
 
     const menu = document.createElement('div');
     menu.classList.add('netanime-side-menu');
@@ -61,40 +63,57 @@ const _createSideMenu = (episodes) => {
 
     const menuitem = document.createElement('div')
     menuitem.classList.add('container')
-    const fullscreenButton = document.createElement('button')
-    const fullscreenTextButton = document.createTextNode('Fullscreen');
-    fullscreenButton.appendChild(fullscreenTextButton)
-    fullscreenButton.addEventListener('click', () => {
-        const wrapper = document.querySelector('.jw-wrapper')
-        if (wrapper) {
-            _setPlayerFullPage(wrapper)
-            const fullscreen = parseInt(sessionStorage.getItem('fullscreen'));
-            sessionStorage.setItem('fullscreen', fullscreen === 0 || fullscreen === null ? 1 : 0)
-        } else {
-            console.log('Call Toast')
-            new Toast({
-                message: 'A funcao fullscreen so esta disponivel para paginas com episodios',
-                type: 'danger'
-            });
-        }
-    })
 
-    menuitem.appendChild(fullscreenButton)
-
-    if (episodes) {
-        episodes.sort(sortByEpisodeDesc)
-
-        episodes.forEach((epi) => {
-            const button = document.createElement('button')
-            button.style.textTransform = 'capitalize'
-            const animeName = epi.name.split('-').join(' ');
-            const textButton = document.createTextNode(animeName + ' ' + epi.episode);
-            button.appendChild(textButton)
-            button.addEventListener('click', () => {
-                window.location.href = `https://yayanimes.net/${epi.anime}-${epi.episode}`
+    if (window.location.pathname === '/') {
+        if (Object.keys(animesGrouped).length > 0) {
+            Object.keys(animesGrouped).forEach((key) => {
+                const button = document.createElement('button')
+                button.style.textTransform = 'capitalize'
+                const animeName = animesGrouped[key][0].name.split('-').join(' ');
+                const textButton = document.createTextNode(animeName);
+                button.appendChild(textButton)
+                button.addEventListener('click', () => {
+                    window.location.href = `https://yayanimes.net/${animesGrouped[key][0].name}`
+                })
+                menuitem.appendChild(button)
             })
-            menuitem.appendChild(button)
+        }
+    } else {
+        const fullscreenButton = document.createElement('button')
+        const fullscreenTextButton = document.createTextNode('Fullscreen');
+        fullscreenButton.appendChild(fullscreenTextButton)
+        fullscreenButton.addEventListener('click', () => {
+            const wrapper = document.querySelector('.jw-wrapper')
+            if (wrapper) {
+                _setPlayerFullPage(wrapper)
+                const fullscreen = parseInt(sessionStorage.getItem('fullscreen'));
+                sessionStorage.setItem('fullscreen', fullscreen === 0 || fullscreen === null ? 1 : 0)
+            } else {
+                console.log('Call Toast')
+                new Toast({
+                    message: 'A funcao fullscreen so esta disponivel para paginas com episodios',
+                    type: 'danger'
+                });
+            }
         })
+
+        menuitem.appendChild(fullscreenButton)
+
+        if (episodes) {
+            episodes.sort(sortByEpisodeDesc)
+
+            episodes.forEach((epi) => {
+                const button = document.createElement('button')
+                button.style.textTransform = 'capitalize'
+                const animeName = epi.name.split('-').join(' ');
+                const textButton = document.createTextNode(animeName + ' ' + epi.episode);
+                button.appendChild(textButton)
+                button.addEventListener('click', () => {
+                    window.location.href = `https://yayanimes.net/${epi.anime}-${epi.episode}`
+                })
+                menuitem.appendChild(button)
+            })
+        }
     }
     menu.appendChild(menuitem)
     menu.appendChild(outMenu)

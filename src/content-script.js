@@ -5,7 +5,7 @@ let INIT_VIDEO_TIME = 210;
 createSession();
 
 
-const initEpisode = async () => {
+const initEpisode = async() => {
     chrome.storage.sync.get((result) => console.log(result))
     const EPISODE = await getEpisodeByUrl()
     let video = null
@@ -44,14 +44,17 @@ const initEpisode = async () => {
         if (STORAGE_EPISODE) {
             video.currentTime = STORAGE_EPISODE.currentTime
         } else {
-            setTimeout(() => {
+            let checkSkip = setInterval(() => {
                 const skip = document.querySelector('.skiab')
                 if (skip) {
                     skip.click()
+                    console.log('Skip Clicked')
+                    clearInterval(checkSkip)
+                    checkSkip = null
                 } else {
-                    console.log('Not Found')
+                    console.log('Skip Not Found')
                 }
-            }, 2000)
+            }, 5000)
         }
 
         let updated_at = 0;

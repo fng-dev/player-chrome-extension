@@ -51,6 +51,23 @@ const setEpisode = async(payload) => {
     })
 }
 
+const getAllEpisodesGrouped = async() => {
+    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    if (!STORAGE) return
+    const { episodes } = STORAGE;
+    const grouped = episodes.reduce((acc, current) => {
+        if (acc && acc[current.name]) {
+            acc[current.name].push(current)
+        } else {
+            acc[current.name] = [current]
+        }
+
+        return acc
+    }, {})
+
+    return grouped
+}
+
 const getEpisode = async(anime, episodeNumber) => {
     const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
