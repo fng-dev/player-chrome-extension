@@ -87,7 +87,8 @@ const _createSideMenu = async(episodes) => {
             if (wrapper) {
                 _setPlayerFullPage(wrapper)
                 const fullscreen = parseInt(sessionStorage.getItem('fullscreen'));
-                sessionStorage.setItem('fullscreen', fullscreen === 0 || fullscreen === null ? 1 : 0)
+                console.log(fullscreen)
+                sessionStorage.setItem('fullscreen', isNaN(fullscreen) ? 1 : 0)
             } else {
                 console.log('Call Toast')
                 new Toast({

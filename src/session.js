@@ -1,40 +1,31 @@
 const SESSION_NAME = 'netAnimes';
 
 const chromeStorageSyncGet = (key) => {
-    return new Promise((resolve) => {
-        chrome.storage.sync.get([key], (result) => {
-            resolve(result[key])
-        })
-    })
+    const STORAGE = localStorage.getItem(key)
+    return JSON.parse(STORAGE)
 }
 
 const chromeStorageSyncSet = (object) => {
-    return new Promise((resolve) => {
-        chrome.storage.sync.set(object, resolve)
-    })
+    localStorage.setItem(SESSION_NAME, JSON.stringify(object))
 }
 
 const createSession = async() => {
-    const SESSION = await chromeStorageSyncGet(SESSION_NAME)
-    if (SESSION === null || SESSION === undefined) await chromeStorageSyncSet({
-        [SESSION_NAME]: {
-            created_at: moment(),
-            episodes: []
-        }
+    const SESSION = chromeStorageSyncGet(SESSION_NAME)
+    if (SESSION === null || SESSION === undefined) chromeStorageSyncSet({
+        created_at: moment(),
+        episodes: []
     })
 }
 
 const setSession = async(payload) => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const SESSION = {...STORAGE, payload }
-    await chromeStorageSyncSet({
-        [SESSION_NAME]: {...SESSION }
-    })
+    chromeStorageSyncSet(SESSION)
 }
 
 const setEpisode = async(payload) => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const { episodes } = STORAGE;
     const EPISODE_INDEX = episodes.findIndex((episode) => episode.anime === payload.anime && episode.episode === payload.episode)
@@ -46,13 +37,11 @@ const setEpisode = async(payload) => {
 
     const SESSION = {...STORAGE, episodes }
 
-    await chromeStorageSyncSet({
-        [SESSION_NAME]: {...SESSION }
-    })
+    chromeStorageSyncSet(SESSION)
 }
 
 const getAllEpisodesGrouped = async() => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const { episodes } = STORAGE;
     const grouped = episodes.reduce((acc, current) => {
@@ -69,7 +58,7 @@ const getAllEpisodesGrouped = async() => {
 }
 
 const getEpisode = async(anime, episodeNumber) => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const { episodes } = STORAGE
     const episode = episodes.find((ep) => ep.anime === anime && ep.episode === episodeNumber)
@@ -81,7 +70,7 @@ const getEpisode = async(anime, episodeNumber) => {
 }
 
 const getEpisodesByAnime = async(name) => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const { episodes } = STORAGE
     const episode = episodes.filter((ep) => ep.name === name)
@@ -93,7 +82,7 @@ const getEpisodesByAnime = async(name) => {
 }
 
 const getLastEpisode = async(anime) => {
-    const STORAGE = await chromeStorageSyncGet(SESSION_NAME)
+    const STORAGE = chromeStorageSyncGet(SESSION_NAME)
     if (!STORAGE) return
     const { episodes } = STORAGE
     const animeEpisodes = episodes.filter((ep) => ep.anime === anime)
